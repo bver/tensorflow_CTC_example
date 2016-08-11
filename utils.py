@@ -30,7 +30,7 @@ def test_edit_distance():
         dist = session.run([editDist], feed_dict=feedDict)
         print(dist)
 
-def data_lists_to_batches(inputList, targetList, batchSize):
+def data_lists_to_batches(inputList, targetList, batchSize, maxSteps=0):
     '''Takes a list of input matrices and a list of target arrays and returns
        a list of batches, with each batch being a 3-element tuple of inputs,
        targets, and sequence lengths.
@@ -45,9 +45,10 @@ def data_lists_to_batches(inputList, targetList, batchSize):
     
     assert len(inputList) == len(targetList)
     nFeatures = inputList[0].shape[0]
-    maxSteps = 0
-    for inp in inputList:
-        maxSteps = max(maxSteps, inp.shape[1])
+
+    if maxSteps == 0:
+        for inp in inputList:
+            maxSteps = max(maxSteps, inp.shape[1])
         
     randIxs = np.random.permutation(len(inputList))
     start, end = (0, batchSize)
@@ -70,11 +71,11 @@ def data_lists_to_batches(inputList, targetList, batchSize):
         end += batchSize
     return (dataBatches, maxSteps)
 
-def load_batched_data(specPath, targetPath, batchSize):
+def load_batched_data(specPath, targetPath, batchSize, maxSteps=0):
     import os
     '''returns 3-element tuple: batched data (list), max # of time steps (int), and
        total number of samples (int)'''
     return data_lists_to_batches([np.load(os.path.join(specPath, fn)) for fn in os.listdir(specPath)],
                                  [np.load(os.path.join(targetPath, fn)) for fn in os.listdir(targetPath)],
-                                 batchSize) + \
+                                 batchSize, maxSteps) + \
             (len(os.listdir(specPath)),)

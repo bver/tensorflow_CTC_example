@@ -49,7 +49,7 @@ with open('my_data/normalized.asc') as data_file:
             if not os.path.exists("char_y/%d" % (sub)):
               os.makedirs("char_y/%d" % (sub))
               print ("making char_y/%d" % (sub))
-            np.save("mfcc/%d/%d.npy" % (sub, fno), np.array(mfcc))
+            np.save("mfcc/%d/%d.npy" % (sub, fno), np.transpose(np.array(mfcc)))
             np.save("char_y/%d/%d.npy" % (sub, fno), np.array(char_y))
             if fno == 1000:
               fno = 0

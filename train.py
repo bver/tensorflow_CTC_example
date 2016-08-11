@@ -29,20 +29,23 @@ nEpochs = 300
 batchSize = 4
 
 ####Network Parameters
-nFeatures = 26 #12 MFCC coefficients + energy, and derivatives
-nHidden = 128
-nClasses = 28#27 characters, plus the "blank" for CTC
+nFeatures = 13 #13 MFCC coefficients
+nHidden = 256 # 128
+nClasses = 29 #28 characters, plus the "blank" for CTC
 
 ####Find maxTimeSteps
-maxTimeSteps = 0
-for subdir in os.listdir(INPUT_PATH):
-    input_path = os.path.join(INPUT_PATH, subdir)
-    output_path = os.path.join(TARGET_PATH, subdir) # assuming subdirs are same in both INPUT_PATH and TARGET_PATH roots
-    print('Checking input from ', input_path)
-    print('Checking output from ', output_path)
-    batchedData, subMax, subdirN = load_batched_data(input_path, output_path, batchSize)
-    maxTimeSteps = max(maxTimeSteps, subMax)
- 
+#maxTimeSteps = 0
+#for subdir in os.listdir(INPUT_PATH):
+#    input_path = os.path.join(INPUT_PATH, subdir)
+#    output_path = os.path.join(TARGET_PATH, subdir) # assuming subdirs are same in both INPUT_PATH and TARGET_PATH roots
+#    print('Checking input from ', input_path)
+#    batchedData, subMax, subdirN = load_batched_data(input_path, output_path, batchSize)
+#    maxTimeSteps = max(maxTimeSteps, subMax)
+
+maxTimeSteps = 250 # we know this in advance
+
+print('maxTimeSteps=', maxTimeSteps)
+
 
 ####Define graph
 print('Defining graph')
@@ -111,7 +114,7 @@ with tf.Session(graph=graph) as session:
             output_path = os.path.join(TARGET_PATH, subdir) # assuming subdirs are same in both INPUT_PATH and TARGET_PATH roots
             print('Loading input from ', input_path)
             print('Loading output from ', output_path)
-            batchedData, subMax, subdirN = load_batched_data(input_path, output_path, batchSize)
+            batchedData, subMax, subdirN = load_batched_data(input_path, output_path, batchSize, maxTimeSteps)
             totalN += subdirN
 
             batchErrors = np.zeros(len(batchedData))
