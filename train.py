@@ -105,19 +105,18 @@ with tf.Session(graph=graph) as session:
     tf.initialize_all_variables().run()
     for epoch in range(nEpochs):
         print('Epoch', epoch+1, '...')
-
+        batchErrors = 0.0
         totalN = 0
-        ####Load data
+
         subdirs_list = np.random.permutation(os.listdir(INPUT_PATH))
         for subdir in subdirs_list:
             input_path = os.path.join(INPUT_PATH, subdir)
             output_path = os.path.join(TARGET_PATH, subdir) # assuming subdirs are same in both INPUT_PATH and TARGET_PATH roots
             print('Loading input from ', input_path)
-            print('Loading output from ', output_path)
+            #print('Loading output from ', output_path)
             batchedData, subMax, subdirN = load_batched_data(input_path, output_path, batchSize, maxTimeSteps)
             totalN += subdirN
 
-            batchErrors = np.zeros(len(batchedData))
             batchRandIxs = np.random.permutation(len(batchedData)) #randomize batch order
             for batch, batchOrigI in enumerate(batchRandIxs):
                 batchInputs, batchTargetSparse, batchSeqLengths = batchedData[batchOrigI]
@@ -125,10 +124,10 @@ with tf.Session(graph=graph) as session:
                 feedDict = {inputX: batchInputs, targetIxs: batchTargetIxs, targetVals: batchTargetVals,
                         targetShape: batchTargetShape, seqLengths: batchSeqLengths}
                 _, l, er, lmt = session.run([optimizer, loss, errorRate, logitsMaxTest], feed_dict=feedDict)
-                print(np.unique(lmt)) #print unique argmax values of first sample in batch; should be blank for a while, then spit out target values
-                if (batch % 1) == 0:
-                    print('Minibatch', batch, '/', batchOrigI, 'loss:', l)
-                    print('Minibatch', batch, '/', batchOrigI, 'error rate:', er)
-                batchErrors[batch] = er*len(batchSeqLengths)
-        epochErrorRate = batchErrors.sum() / totalN
-        print('Epoch', epoch+1, 'error rate:', epochErrorRate)
+#                print(np.unique(lmt)) #print unique argmax values of first sample in batch; should be blank for a while, then spit out target values
+#                if (batch % 1) == 0:
+#                    print('Minibatch', batch, '/', batchOrigI, 'loss:', l)
+#                    print('Minibatch', batch, '/', batchOrigI, 'error rate:', er)
+                batchErrors += er*len(batchSeqLengths)
+            print('error rate so far:', batchErrors / totalN)
+        print('Epoch', epoch+1, 'error rate:', batchErrors / totalN)
