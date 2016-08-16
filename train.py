@@ -103,6 +103,7 @@ with graph.as_default():
 with tf.Session(graph=graph) as session:
     print('Initializing')
     tf.initialize_all_variables().run()
+    saver = tf.train.Saver()
     for epoch in range(nEpochs):
         print('Epoch', epoch+1, '...')
         batchErrors = 0.0
@@ -130,4 +131,8 @@ with tf.Session(graph=graph) as session:
 #                    print('Minibatch', batch, '/', batchOrigI, 'error rate:', er)
                 batchErrors += er*len(batchSeqLengths)
             print('error rate so far:', batchErrors / totalN)
+
+        # Epoch finished
         print('Epoch', epoch+1, 'error rate:', batchErrors / totalN)
+        save_path = saver.save(session, "./model.ckpt", global_step=epoch)
+        print("Model saved in file: %s" % save_path)
