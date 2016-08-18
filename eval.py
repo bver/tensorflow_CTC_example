@@ -84,7 +84,7 @@ with graph.as_default():
 with tf.Session(graph=graph) as session:
     print('Initializing')
     tf.initialize_all_variables().run()
-    assert len(sys.argv) == 3 
+    assert len(sys.argv) == 4
 
     restore_path = sys.argv[1]
     saver = tf.train.Saver()
@@ -106,6 +106,10 @@ with tf.Session(graph=graph) as session:
     print('sequence len', seq_len)
 
     feedDict = {inputX: input_data, seqLengths: seq_len}
-    pred = session.run([predictions], feed_dict=feedDict)
+    pred, logits3d = session.run([predictions, logits3d], feed_dict=feedDict)
     print('predictions:', pred)
+    print('logits:', logits3d.shape)
 
+    output_path =  sys.argv[3]
+    print("saved to '%s'" % output_path)
+    np.savetxt(output_path, logits3d[:,0,:])
