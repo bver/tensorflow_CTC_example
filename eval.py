@@ -26,7 +26,7 @@ nHidden = 256 # 128
 nClasses = 29 #28 characters, plus the "blank" for CTC
 
 # we know this in advance
-maxTimeSteps = 250 
+maxTimeSteps = 300
 
 ####Define graph
 print('Defining graph')
@@ -80,6 +80,15 @@ with graph.as_default():
 #    errorRate = tf.reduce_sum(tf.edit_distance(predictions, targetY, normalize=False)) / \
 #                tf.to_float(tf.size(targetY.values))
 
+
+classes = " abcdefghijklmnopqrstuvwxyz'"
+i = 0
+classmap = {}
+for c in classes:
+    classmap[i] = c
+    i += 1
+
+
 ####Run session
 with tf.Session(graph=graph) as session:
     print('Initializing')
@@ -93,8 +102,12 @@ with tf.Session(graph=graph) as session:
 
     input_path = sys.argv[2]
     print('Loading input from ', input_path)
-    in_data = np.load(input_path)
+    #in_data = np.load(input_path)
+    in_data = np.transpose(np.loadtxt(input_path))
+    assert in_data.shape[0] == nFeatures
     time_steps = in_data.shape[1] 
+    assert time_steps <= maxTimeSteps
+
     print('in_data.shape', in_data.shape )
     padded_data = np.pad(in_data, pad_width=((0,0),(0,maxTimeSteps-time_steps)), mode='constant', constant_values=0)
     print('padded_data.shape', padded_data.shape )
@@ -107,7 +120,10 @@ with tf.Session(graph=graph) as session:
 
     feedDict = {inputX: input_data, seqLengths: seq_len}
     pred, logits3d = session.run([predictions, logits3d], feed_dict=feedDict)
-    print('predictions:', pred)
+    print('predictions:', pred.values)
+    pred_chars = [ classmap[c] for c in pred.values]
+    print('prediction chars:', pred_chars)
+
     print('logits:', logits3d.shape)
 
     output_path =  sys.argv[3]
