@@ -38,11 +38,11 @@ with graph.as_default():
     biasesClasses = tf.Variable(tf.zeros([nClasses]))
 
     ####Network
-    forwardH1 = rnn_cell.LSTMCell(nHidden, use_peepholes=True, state_is_tuple=True)
-    backwardH1 = rnn_cell.LSTMCell(nHidden, use_peepholes=True, state_is_tuple=True)
+    forwardH1 = rnn_cell.GRUCell(nHidden)
+    backwardH1 = rnn_cell.GRUCell(nHidden)
 
-    forwardStack = rnn_cell.MultiRNNCell([forwardH1] * nLayers, state_is_tuple=True)
-    backwardStack = rnn_cell.MultiRNNCell([backwardH1] * nLayers, state_is_tuple=True)
+    forwardStack = rnn_cell.MultiRNNCell([forwardH1] * nLayers)
+    backwardStack = rnn_cell.MultiRNNCell([backwardH1] * nLayers)
 
     fbH1, _, _ = bidirectional_rnn(forwardStack, backwardStack, inputList, dtype=tf.float32,
                                        scope='BDLSTM_H1')
