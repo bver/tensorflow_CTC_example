@@ -58,4 +58,4 @@ with tf.Session(graph=graph) as session:
 
     output_path =  sys.argv[3]
     print("saved to '%s'" % output_path)
-    np.savetxt(output_path, logits3d[:,0,:])
+    np.savetxt(output_path, np.exp(logits3d[:,0,:]))

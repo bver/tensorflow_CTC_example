@@ -1,6 +1,6 @@
 ####Learning Parameters
-learningRate = 0.001
-momentum = 0.9
+learningRate = 0.0007 # 0.001
+momentum = 0.5 # 0.9
 nEpochs = 300
 
 ####Network Parameters
