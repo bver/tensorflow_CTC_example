@@ -9,7 +9,6 @@ import numpy as np
 
 import params
 params.batchSize = 1
-params.maxTimeSteps = 300
 from model_graph import *
 
 classes = " abcdefghijklmnopqrstuvwxyz'"
@@ -36,9 +35,10 @@ with tf.Session(graph=graph) as session:
     in_data = np.transpose(np.loadtxt(input_path))
     assert in_data.shape[0] == nFeatures
     time_steps = in_data.shape[1] 
+    print('in_data.shape ', in_data.shape )
+    print('maxTimeSteps ', maxTimeSteps)
     assert time_steps <= maxTimeSteps
 
-    print('in_data.shape', in_data.shape )
     padded_data = np.pad(in_data, pad_width=((0,0),(0,maxTimeSteps-time_steps)), mode='constant', constant_values=0)
     print('padded_data.shape', padded_data.shape )
 

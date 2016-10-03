@@ -11,5 +11,5 @@ batchSize = 4
 nLayers = 4
 
 # we know this in advance
-maxTimeSteps = 250
+maxTimeSteps = 400  
 
