@@ -43,6 +43,7 @@ with tf.Session(graph=graph) as session:
 
             batchRandIxs = np.random.permutation(len(batchedData)) #randomize batch order
             for batch, batchOrigI in enumerate(batchRandIxs):
+                print('file ', batchOrigI)
                 batchInputs, batchTargetSparse, batchSeqLengths = batchedData[batchOrigI]
                 batchTargetIxs, batchTargetVals, batchTargetShape = batchTargetSparse
                 feedDict = {inputX: batchInputs, targetIxs: batchTargetIxs, targetVals: batchTargetVals,

@@ -2,6 +2,7 @@
 import numpy as np
 import json
 import os
+import sys
 
 # Bad ideas:
 # import linecache 
@@ -11,12 +12,18 @@ import os
 # memory consumed:
 # x = np.loadtxt('normalized.asc')
 
-with open('my_data/tran.json') as json_file:    
+assert len(sys.argv) == 4 
+normalized_asc = sys.argv[1]
+tran_json = sys.argv[2]
+prefix = sys.argv[3]
+print("normalized_asc=%s tran_json=%s prefix=%s" % (normalized_asc, tran_json, prefix))
+
+with open(tran_json) as json_file:    
     tran = json.load(json_file)
 print('buckets:', len(tran['buckets']))
 
 data_idx = [0]
-with open('my_data/normalized.asc') as data_file:
+with open(normalized_asc) as data_file:
     while data_file.readline():
         data_idx.append(data_file.tell())
 print('read', len(data_idx), 'lines')
@@ -30,7 +37,7 @@ for c in classes:
 
 sub = 0
 fno = 0
-with open('my_data/normalized.asc') as data_file:
+with open(normalized_asc) as data_file:
     for bucket in tran['buckets']:
         for clue in bucket:
             from_time, to_time, text = clue
@@ -43,14 +50,14 @@ with open('my_data/normalized.asc') as data_file:
             for c in text:
                 if c in classmap:
                     char_y.append(classmap[c])
-            if not os.path.exists("mfcc/%d" % (sub)):
-              os.makedirs("mfcc/%d" % (sub))
-              print ("making mfcc/%d" % (sub))
-            if not os.path.exists("char_y/%d" % (sub)):
-              os.makedirs("char_y/%d" % (sub))
-              print ("making char_y/%d" % (sub))
-            np.save("mfcc/%d/%d.npy" % (sub, fno), np.transpose(np.array(mfcc)))
-            np.save("char_y/%d/%d.npy" % (sub, fno), np.array(char_y))
+            if not os.path.exists("mfcc/%s%d" % (prefix, sub)):
+              os.makedirs("mfcc/%s%d" % (prefix, sub))
+              print ("making mfcc/%s%d" % (prefix, sub))
+            if not os.path.exists("char_y/%s%d" % (prefix, sub)):
+              os.makedirs("char_y/%s%d" % (prefix, sub))
+              print ("making char_y/%s%d" % (prefix, sub))
+            np.save("mfcc/%s%d/%d.npy" % (prefix, sub, fno), np.transpose(np.array(mfcc)))
+            np.save("char_y/%s%d/%d.npy" % (prefix, sub, fno), np.array(char_y))
             if fno == 1000:
               fno = 0
               sub += 1
