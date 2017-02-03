@@ -9,6 +9,15 @@ import numpy as np
 
 import params
 params.batchSize = 1
+
+assert len(sys.argv) == 4
+input_path = sys.argv[2]
+print('Loading input from ', input_path)
+in_data = np.transpose(np.loadtxt(input_path))
+assert in_data.shape[0] == params.nFeatures
+time_steps = in_data.shape[1]
+params.maxTimeSteps = time_steps
+
 from model_graph import *
 
 classes = " abcdefghijklmnopqrstuvwxyz'"
@@ -22,27 +31,17 @@ for c in classes:
 with tf.Session(graph=graph) as session:
     print('Initializing')
     tf.initialize_all_variables().run()
-    assert len(sys.argv) == 4
 
     restore_path = sys.argv[1]
     saver = tf.train.Saver()
     saver.restore(session, restore_path)
     print("Restored from '%s'" % restore_path)
 
-    input_path = sys.argv[2]
-    print('Loading input from ', input_path)
-    #in_data = np.load(input_path)
-    in_data = np.transpose(np.loadtxt(input_path))
-    assert in_data.shape[0] == nFeatures
-    time_steps = in_data.shape[1] 
     print('in_data.shape ', in_data.shape )
     print('maxTimeSteps ', maxTimeSteps)
     assert time_steps <= maxTimeSteps
 
-    padded_data = np.pad(in_data, pad_width=((0,0),(0,maxTimeSteps-time_steps)), mode='constant', constant_values=0)
-    print('padded_data.shape', padded_data.shape )
-
-    input_data = np.reshape(np.transpose(padded_data), (maxTimeSteps, batchSize, nFeatures))
+    input_data = np.reshape(np.transpose(in_data), (maxTimeSteps, batchSize, nFeatures))
     print('input shape ', input_data.shape)
 
     seq_len = np.array([time_steps])
