@@ -28,7 +28,7 @@ with open(normalized_asc) as data_file:
         data_idx.append(data_file.tell())
 print('read', len(data_idx), 'lines')
 
-classes = " abcdefghijklmnopqrstuvwxyz'"
+classes = " abcdefghijklmnopqrstuvwxyz'" # TODO: use params.classes here
 i = 0
 classmap = {}
 for c in classes:

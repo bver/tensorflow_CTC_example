@@ -6,7 +6,8 @@ nEpochs = 300
 ####Network Parameters
 nFeatures = 13 #13 MFCC coefficients
 nHidden = 256 # 256
-nClasses = 29 #28 characters, plus the "blank" for CTC
+classes = " abcdefghijklmnopqrstuvwxyz'"
+nClasses = len(classes)+1 #29 (28 characters, plus the "blank" for CTC)
 batchSize = 4
 nLayers = 4
 

@@ -20,10 +20,9 @@ params.maxTimeSteps = time_steps
 
 from model_graph import *
 
-classes = " abcdefghijklmnopqrstuvwxyz'"
 i = 0
 classmap = {}
-for c in classes:
+for c in params.classes:
     classmap[i] = c
     i += 1
 
@@ -37,7 +36,8 @@ with tf.Session(graph=graph) as session:
     saver.restore(session, restore_path)
     print("Restored from '%s'" % restore_path)
 
-    print('in_data.shape ', in_data.shape )
+    print('nClases ', nClasses)
+    print('in_data.shape ', in_data.shape)
     print('maxTimeSteps ', maxTimeSteps)
     assert time_steps <= maxTimeSteps
 
