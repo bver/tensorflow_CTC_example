@@ -16,6 +16,7 @@ import numpy as np
 from utils import load_batched_data
 from model_graph import *
 import os
+import sys
 
 INPUT_PATH = './data_root/mfcc' #directory of directories of MFCC nFeatures x nFrames 2-D array .npy files
 TARGET_PATH = './data_root/char_y/' #directory of directories of nCharacters 1-D array .npy files
@@ -27,6 +28,12 @@ with tf.Session(graph=graph) as session:
     print('Initializing')
     tf.initialize_all_variables().run()
     saver = tf.train.Saver()
+
+    if len(sys.argv) == 2:
+        restore_path = sys.argv[1]
+        saver.restore(session, restore_path)
+        print("Restored from '%s'" % restore_path)
+
     for epoch in range(nEpochs):
         print('Epoch', epoch+1, '...')
         batchErrors = 0.0
